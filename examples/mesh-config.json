@@ -1,0 +1,29 @@
+{
+  "backends": [
+    {"name": "stable-v1"},
+    {"name": "canary-v2"}
+  ],
+  "virtual_services": [
+    {
+      "name": "web-api",
+      "routes": [
+        {
+          "name": "beta-testers-to-canary",
+          "match_headers": {"x-beta-tester": "true"},
+          "backends": [{"name": "canary-v2", "weight": 100}]
+        },
+        {
+          "name": "default-split",
+          "backends": [
+            {"name": "stable-v1", "weight": 90},
+            {"name": "canary-v2", "weight": 10}
+          ]
+        }
+      ]
+    }
+  ],
+  "ingress_ports": [
+    {"port": 443, "mtls": "STRICT"},
+    {"port": 15017, "mtls": "PERMISSIVE"}
+  ]
+}
